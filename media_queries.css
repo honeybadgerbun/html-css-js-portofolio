@@ -1,0 +1,29 @@
+@media screen and (max-width: 1200px) {
+    #desktop-nav {
+        display: none;
+    }
+    #hamburger-nav {
+        display: flex;
+    }
+}
+
+@media screen and (min-width: 1201px) {
+    #hamburger-nav {
+        display: none;
+    }
+    #desktop-nav {
+        display: flex;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .experience-categories-container {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .experience-category {
+        min-width: 100%;
+        max-width: 100%;
+    }
+}

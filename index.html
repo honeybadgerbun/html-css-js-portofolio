@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="media_queries.css">
+  </head>
+  <body>
+    <nav id="desktop-nav">
+      <div class="logo">Honeywell Olabode</div>
+      <div>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+      </div>
+    </nav>
+    <nav id="hamburger-nav">
+        <div class="logo">Honeywell Olabode</div>
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" onclick="toggleMenu()">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="menu-links">
+              <li><a href="#about" onclick="toggleMenu()">About</a></li>
+              <li><a href="#experience" onclick="toggleMenu()">Experience</a></li>
+              <li><a href="#blog" onclick="toggleMenu()">Blog</a></li>
+              <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
+            </div>
+        </div>
+    </nav>
+    <section id="profile">
+        <div class="section__pic-containter">
+            <img src="./assets/profile-pic.png" alt="Honeywell Olabode Profile Picture" />
+        </div>
+        <div class="section__text">
+            <p class="section__text__p1">Hello, I'm</p>
+            <h1 class="title">Honeywell Olabode</h1>
+            <p class="section__text__p2">Aspiring Cyber Security Professional</p>
+            <div class="btn-container">
+                <button class="btn btn-color-2" onclick="window.open('./assets/Honeywell Olabode\'s Resume.pdf')">
+                    Download CV
+                </button>
+                <button class="btn btn-color-1" onclick="location.href='./#contact'">
+                    Contact Info
+                </button>
+            </div>
+            <div id="socials-container">
+                <img src="./assets/linkedin.png" alt="My LinkedIn profile" class="icon" onclick="location.href='https://www.linkedin.com/in/honeywell-olabode'" />
+                <img src="./assets/github.png" alt="My Github profile" class="icon" onclick="location.href='https://github.com/honeybadgerbun'" />
+            </div>
+        </div>
+        <img src="./assets/arrow.png" alt="Arrow Icon" class="icon arrow" onclick="location.href='./#about'" />
+    </section>
+    <section id="about">
+        <p class="section__text__p1">Get To Know More</p>
+        <h1 class="title">About Me</h1>
+        <div class="section-container">
+            <div class="section__pic-container">
+                <img src="./assets/about-pic.png" alt="Profile Picture" class="about-pic" />
+            </div>
+            <div class="about-details-container">
+                <div class="about-containers">
+                    <div class="details-container">
+                        <img src="./assets/experience.png" alt="Experience Icon" class="icon" />
+                        <h3>Experience</h3>
+                        <p>Software Engineering Intern <br />Data Scientist Intern <br />Cyber Security Intern</p>
+                    </div>
+                    <div class="details-container">
+                        <img src="./assets/education.png" alt="Education Icon" class="icon" />
+                        <h3>Education</h3>
+                        <p>B.Sc Computer Science @ University of Houston</p>
+                    </div>
+                </div>
+                <div class="text-container">
+                    <p>
+                        👋 Hi, I’m Honeywell — a driven and curious technologist with a strong foundation in software engineering and data science, now focused on a career in cybersecurity.
+
+                        I’m passionate about solving complex problems, understanding systems from the ground up, and building secure, resilient solutions. With a commitment to continuous learning and a sharp analytical mindset, I’m eager to contribute to innovative teams working to protect digital assets and infrastructure.
+
+                        I'm actively seeking opportunities where I can grow as a cybersecurity professional and make a meaningful impact.                    </p>
+                </div>
+            </div>
+        </div>
+        <img src="./assets/arrow.png" alt="Arrow Icon" class="icon arrow" onclick="location.href='./#experience'" />
+    </section>
+    <section id="experience">
+        <p class="section__text__p1">Explore My</p>
+        <h1 class="title">Experience</h1>
+        <div class="experience-details-container">
+            <div class="experience-categories-container">
+                <div class="experience-category">
+                    <h2 class="experience-sub-title">Software Engineering</h2>
+                    <div class="details-container color-container">
+                        <div class="skills-grid">
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>HTML</h3>
+                                    <p>Experienced</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>CSS</h3>
+                                    <p>Experienced</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>AWS</h3>
+                                    <p>Basic</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>C++</h3>
+                                    <p>Experienced</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>Git</h3>
+                                    <p>Intermediate</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>JavaScript</h3>
+                                    <p>Intermediate</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="experience-category">
+                    <h2 class="experience-sub-title">Data Science</h2>
+                    <div class="details-container color-container">
+                        <div class="skills-grid">
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>SQL</h3>
+                                    <p>Experienced</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>PowerBI</h3>
+                                    <p>Experienced</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>Machine Learning</h3>
+                                    <p>Intermediate</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>R</h3>
+                                    <p>Intermediate</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>Python</h3>
+                                    <p>Experienced</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>Tableau</h3>
+                                    <p>Basic</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="experience-category">
+                    <h2 class="experience-sub-title">Cyber Security</h2>
+                    <div class="details-container color-container">
+                        <div class="skills-grid">
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>Incident Detection</h3>
+                                    <p>Basic</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>Threat Intelligence</h3>
+                                    <p>Basic</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>Linux</h3>
+                                    <p>Basic</p>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <img src="./assets/checkmark.png" alt="Experience Icon" class="icon" />
+                                <div>
+                                    <h3>Frameworks/Models</h3>
+                                    <p>Basic</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img src="./assets/arrow.png" alt="Arrow Icon" class="icon arrow" onclick="location.href='./#contact'" />
+    </section>
+    <section id="blog">
+        <p class="section__text__p1">Browse My Recent</p>
+        <h1 class="title">Blog Posts</h1>
+        <div class="experience-details-container">
+            <div class="about-containers">
+                <div class="details-container color-container">
+                    <div class="article-container">
+                        <img src="./assets/loading.gif" alt="Loading" class="project-img" />
+                        <h3>Check back soon!</h3>
+                        <p class="project-subtitle">Coming Soon</p>
+                        <div class="btn-container">
+                            <p class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/honeybadgerbun'">
+                                Read More
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="details-container color-container">
+                    <div class="article-container">
+                        <img src="./assets/loading.gif" alt="Loading" class="project-img" />
+                        <h3>Check back soon!</h3>
+                        <p class="project-subtitle">Coming Soon</p>
+                        <div class="btn-container">
+                            <p class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/honeybadgerbun'">
+                                Read More
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="details-container color-container">
+                    <div class="article-container">
+                        <img src="./assets/loading.gif" alt="Loading" class="project-img" />
+                        <h3>Check back soon!</h3>
+                        <p class="project-subtitle">Coming Soon</p>
+                        <div class="btn-container">
+                            <p class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/honeybadgerbun'">
+                                Read More
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img src="./assets/arrow.png" alt="Arrow Icon" class="icon arrow" onclick="location.href='./#contact'" />
+    </section>
+    <section id="contact">
+        <p class="section__text__p1">Get in Touch</p>
+        <h1 class="title">Contact Me</h1>
+        <div class="contact-info-upper-container">
+            <div class="contact-info-container">
+                <img src="./assets/email.png" alt="Email icon" class="icon contact-icon email-icon" />
+                <p><a href="mailto:honeywell7890@gmail.com">honeywell7890@gmail.com</a></p>
+            </div>
+            <div class="contact-info-container">
+                <img src="./assets/linkedin.png" alt="LinkedIn icon" class="icon contact-icon" />
+                <p><a href="https://www.linkedin.com/in/honeywell-olabode">LinkedIn</a></p>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <nav id="footer-nav">
+            <div>
+                <ul class="nav-links">
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#experience">Experience</a></li>
+                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+        <p>Copyright © 2025 Honeywell Olabode. All Rights Reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>
