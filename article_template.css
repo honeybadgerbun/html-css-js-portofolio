@@ -1,0 +1,161 @@
+/* ARTICLE TEMPLATE STYLES */
+
+.blog-article {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    min-height: 80vh;
+}
+
+.article-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-top: 2rem;
+}
+
+.article-meta {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.article-date {
+    color: #888;
+}
+
+.article-category {
+    background: #f0f0f0;
+    padding: 0.2rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.article-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+    line-height: 1.2;
+}
+
+.article-tags {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.article-tags .tag {
+    background: #e8f4fd;
+    color: #0066cc;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.article-content {
+    margin-bottom: 3rem;
+}
+
+.article-image {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.article-header-img {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.article-text {
+    line-height: 1.8;
+    color: #333;
+}
+
+.article-text p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.article-text h2 {
+    font-size: 1.8rem;
+    margin: 2.5rem 0 1rem 0;
+    color: #333;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 0.5rem;
+}
+
+.article-text h3 {
+    font-size: 1.4rem;
+    margin: 2rem 0 1rem 0;
+    color: #444;
+}
+
+.article-text ul {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.article-text li {
+    margin-bottom: 0.8rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+.article-text strong {
+    font-weight: 600;
+    color: #333;
+}
+
+.article-footer {
+    text-align: center;
+    padding: 2rem 0;
+    border-top: 1px solid #eee;
+    margin-top: 3rem;
+}
+
+.back-to-blog {
+    display: inline-block;
+}
+
+.back-to-blog .btn {
+    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
+}
+
+/* Responsive adjustments for article */
+@media (max-width: 768px) {
+    .blog-article {
+        padding: 0 1rem;
+        margin: 1rem auto;
+    }
+    
+    .article-title {
+        font-size: 2rem;
+    }
+    
+    .article-text p {
+        font-size: 1rem;
+    }
+    
+    .article-text h2 {
+        font-size: 1.5rem;
+    }
+    
+    .article-text h3 {
+        font-size: 1.2rem;
+    }
+    
+    .article-header-img {
+        height: 200px;
+    }
+}

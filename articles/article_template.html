@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Title - Its Always Honey Blog</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../media_queries.css">
+    <link rel="stylesheet" href="../article_template.css">
+  </head>
+  <body>
+    <nav id="desktop-nav">
+      <div class="logo">Honeywell Olabode</div>
+      <div>
+            <ul class="nav-links">
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#experience">Experience</a></li>
+                <li><a href="../blog.html">Blog</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+            </ul>
+      </div>
+    </nav>
+    <nav id="hamburger-nav">
+        <div class="logo">Honeywell Olabode</div>
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" onclick="toggleMenu()">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="menu-links">
+              <li><a href="../index.html#about" onclick="toggleMenu()">About</a></li>
+              <li><a href="../index.html#experience" onclick="toggleMenu()">Experience</a></li>
+              <li><a href="../blog.html" onclick="toggleMenu()">Blog</a></li>
+              <li><a href="../index.html#contact" onclick="toggleMenu()">Contact</a></li>
+            </div>
+        </div>
+    </nav>
+    
+    <article class="blog-article">
+        <div class="article-header">
+            <div class="article-meta">
+                <span class="article-date">Date Here</span>
+                <span class="article-category">Category Here</span>
+            </div>
+            <h1 class="article-title">Article Title</h1>
+            <div class="article-tags">
+                <span class="tag">Tag 1</span>
+                <span class="tag">Tag 2</span>
+                <span class="tag">Tag 3</span>
+            </div>
+        </div>
+        
+        <div class="article-content">
+            <div class="article-image">
+                <img src="../assets/your-image.jpg" alt="Article Header Image" class="article-header-img" />
+            </div>
+            
+            <div class="article-text">
+                <p>Your article content goes here...</p>
+                
+                <h2>Section Heading</h2>
+                <p>More content...</p>
+                
+                <h3>Subsection Heading</h3>
+                <p>Additional content...</p>
+                
+                <h2>Another Section</h2>
+                <p>More content...</p>
+                
+                <h3>Final Thoughts</h3>
+                <p>Conclusion...</p>
+            </div>
+        </div>
+        
+        <div class="article-footer">
+            <div class="back-to-blog">
+                <a href="../blog.html" class="btn btn-color-2">← Back to Blog</a>
+            </div>
+        </div>
+    </article>
+
+    <footer>
+        <nav id="footer-nav">
+            <div>
+                <ul class="nav-links">
+                    <li><a href="../index.html#about">About</a></li>
+                    <li><a href="../index.html#experience">Experience</a></li>
+                    <li><a href="../blog.html">Blog</a></li>
+                    <li><a href="../index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+        <p>Copyright © 2025 Honeywell Olabode. All Rights Reserved.</p>
+    </footer>
+    <script src="../script.js"></script>
+  </body>
+</html> 

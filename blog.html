@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blog - Honeywell Olabode</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="media_queries.css">
+  </head>
+  <body>
+    <nav id="desktop-nav">
+      <div class="logo">Honeywell Olabode</div>
+      <div>
+            <ul class="nav-links">
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#experience">Experience</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+      </div>
+    </nav>
+    <nav id="hamburger-nav">
+        <div class="logo">Honeywell Olabode</div>
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" onclick="toggleMenu()">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="menu-links">
+              <li><a href="index.html#about" onclick="toggleMenu()">About</a></li>
+              <li><a href="index.html#experience" onclick="toggleMenu()">Experience</a></li>
+              <li><a href="blog.html" onclick="toggleMenu()">Blog</a></li>
+              <li><a href="index.html#contact" onclick="toggleMenu()">Contact</a></li>
+            </div>
+        </div>
+    </nav>
+    
+    <section id="blog-header">
+        <div class="section__text">
+            <p class="section__text__p1">Welcome to the</p>
+            <h1 class="title">Its Always Honey Blog</h1>
+            <p class="section__text__p2">My journey through technology, cyber security, and innovation.</p>
+        </div>
+    </section>
+
+    <section id="blog-posts">
+        <div class="experience-details-container">
+            <div class="blog-posts-grid">
+                <div class="blog-post featured">
+                    <div class="post-image">
+                        <img src="./assets/tipping_hat.png" alt="Hello World - Cybersecurity Journey" class="project-img" />
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-date">July 11, 2025</span>
+                            <span class="post-category">Cybersecurity</span>
+                        </div>
+                        <h2 class="post-title">Hello World</h2>
+                        <p class="post-excerpt">
+                            Welcome to my cybersecurity journey! I'm excited to dive into the world of cybersecurity and share my experiences, learnings, and practices as I navigate this fascinating field. Join me as I track my progress and discoveries.
+                        </p>
+                        <div class="post-tags">
+                            <span class="tag">Cybersecurity</span>
+                            <span class="tag">Journey</span>
+                            <span class="tag">Learning</span>
+                        </div>
+                        <div class="btn-container">
+                            <a href="articles/hello_world_article.html" class="btn btn-color-2">
+                                Read Full Article
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="newsletter">
+        <div class="newsletter-container">
+            <h2>Stay Updated</h2>
+            <p>Subscribe to my newsletter for the latest insights on cybersecurity, technology, and career development.</p>
+            <div class="newsletter-form">
+                <form id="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+                    <input type="email" placeholder="Enter your email address" class="newsletter-input" id="newsletter-email" required />
+                    <button type="submit" class="btn btn-color-1">Subscribe</button>
+                </form>
+            </div>
+            <div id="newsletter-message" class="newsletter-message"></div>
+        </div>
+    </section>
+
+    <footer>
+        <nav id="footer-nav">
+            <div>
+                <ul class="nav-links">
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#experience">Experience</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+        <p>Copyright © 2025 Honeywell Olabode. All Rights Reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html> 
