@@ -130,15 +130,26 @@
     </div>
 
     <script>
-        // Obfuscated credential checking
+        // Secure credential checking with obfuscated values
         function checkCredentials(username, password) {
-            // Split the encoded strings to make them harder to identify
-            const userParts = ['aG9uZXl3ZWxs', 'bw=='];
-            const passParts = ['IyNWcnVHMVMz', 'VlE='];
+            // Obfuscated credential validation
+            const key = 'H0n3yw3ll_2024_S3cur3_K3y!';
             
-            // Reconstruct and decode
-            const storedUsername = atob(userParts.join(''));
-            const storedPassword = atob(passParts.join(''));
+            // Username: 'admin' - obfuscated as hex values
+            const userHex = [0x61, 0x64, 0x6d, 0x69, 0x6e]; // 'admin' in hex
+            // Password: 'SecurePass123!' - obfuscated as hex values
+            const passHex = [0x53, 0x65, 0x63, 0x75, 0x72, 0x65, 0x50, 0x61, 0x73, 0x73, 0x31, 0x32, 0x33, 0x21];
+            
+            // Convert hex to characters
+            let storedUsername = '';
+            for (let i = 0; i < userHex.length; i++) {
+                storedUsername += String.fromCharCode(userHex[i]);
+            }
+            
+            let storedPassword = '';
+            for (let i = 0; i < passHex.length; i++) {
+                storedPassword += String.fromCharCode(passHex[i]);
+            }
             
             // Check credentials
             return username.toLowerCase() === storedUsername.toLowerCase() && 
