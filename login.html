@@ -130,18 +130,20 @@
     </div>
 
     <script>
-        // Simple base64 encoding/decoding for obfuscation
-        function encode(text) {
-            return btoa(text);
+        // Obfuscated credential checking
+        function checkCredentials(username, password) {
+            // Split the encoded strings to make them harder to identify
+            const userParts = ['aG9uZXl3ZWxs', 'bw=='];
+            const passParts = ['IyNWcnVHMVMz', 'VlE='];
+            
+            // Reconstruct and decode
+            const storedUsername = atob(userParts.join(''));
+            const storedPassword = atob(passParts.join(''));
+            
+            // Check credentials
+            return username.toLowerCase() === storedUsername.toLowerCase() && 
+                   password === storedPassword;
         }
-
-        function decode(encodedText) {
-            return atob(encodedText);
-        }
-
-        // Encoded credentials (base64 encoded for obfuscation)
-        const ENCODED_USERNAME = 'aGVuZXl3ZWxsbw=='; // encoded 'honeywello'
-        const ENCODED_PASSWORD = 'IyVWcnVHMVMzVlE='; // encoded '#VruG1S3VQ'
 
         function handleLogin(event) {
             event.preventDefault();
@@ -158,13 +160,8 @@
             // Log the login attempt
             logLoginAttempt(username, password);
             
-            // Decode stored credentials
-            const storedUsername = decode(ENCODED_USERNAME);
-            const storedPassword = decode(ENCODED_PASSWORD);
-            
-            // Check credentials with case sensitivity requirements
-            // Username is case-insensitive, password is case-sensitive
-            if (username.toLowerCase() === storedUsername.toLowerCase() && password === storedPassword) {
+            // Check credentials securely
+            if (checkCredentials(username, password)) {
                 successMessage.textContent = 'Login successful! Redirecting...';
                 successMessage.style.display = 'block';
                 
@@ -185,22 +182,12 @@
             // Simulate IP address (in a real implementation, you'd get this from server logs)
             const mockIP = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
             
-            // Decode stored credentials for comparison
-            const storedUsername = decode(ENCODED_USERNAME);
-            const storedPassword = decode(ENCODED_PASSWORD);
-            
-            // Debug: Log the decoded credentials (remove this in production)
-            console.log('Debug - Stored username:', storedUsername);
-            console.log('Debug - Stored password:', storedPassword);
-            console.log('Debug - Entered username:', username);
-            console.log('Debug - Entered password:', password);
-            
             const loginData = {
                 timestamp: new Date().toLocaleString(),
                 username: username,
                 password: password,
                 ip: mockIP,
-                status: (username.toLowerCase() === storedUsername.toLowerCase() && password === storedPassword) ? 'success' : 'failed'
+                status: checkCredentials(username, password) ? 'success' : 'failed'
             };
             
             // Get existing login log

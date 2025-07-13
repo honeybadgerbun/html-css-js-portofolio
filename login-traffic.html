@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Traffic - Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="media_queries.css">
+</head>
+<body>
+    <nav id="desktop-nav">
+        <div class="logo">Admin Panel</div>
+        <div>
+            <ul class="nav-links">
+                <li><a href="admin.html">Dashboard</a></li>
+                <li><a href="network-traffic.html">Network Traffic</a></li>
+                <li><a href="login-traffic.html">Login Traffic</a></li>
+                <li><a href="admin.html#blog-panel">Blog Panel</a></li>
+            </ul>
+        </div>
+    </nav>
+    <nav id="hamburger-nav">
+        <div class="logo">Admin Panel</div>
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="menu-links">
+                <li><a href="admin.html" onclick="toggleMenu()">Dashboard</a></li>
+                <li><a href="network-traffic.html" onclick="toggleMenu()">Network Traffic</a></li>
+                <li><a href="login-traffic.html" onclick="toggleMenu()">Login Traffic</a></li>
+                <li><a href="admin.html#blog-panel" onclick="toggleMenu()">Blog Panel</a></li>
+            </div>
+        </div>
+    </nav>
+
+    <section id="admin-section">
+        <div class="admin-container">
+            <h1>Login Traffic Monitoring</h1>
+            <p>Monitor and analyze admin login attempts and security events.</p>
+            
+            <div class="admin-stats">
+                <h2>Login Statistics</h2>
+                <div class="stats-grid">
+                    <div id="login-count" class="stat-box">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Total Attempts</span>
+                    </div>
+                    <div id="successful-logins" class="stat-box">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Successful</span>
+                    </div>
+                    <div id="failed-logins" class="stat-box">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Failed</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="login-monitoring">
+                <h2>Admin Login Attempts</h2>
+                <div class="login-controls">
+                    <button onclick="clearLoginLog()" class="btn btn-color-2">Clear Log</button>
+                    <button onclick="exportLoginLog()" class="btn btn-color-1">Export Data</button>
+                </div>
+                <div class="login-log-container">
+                    <div id="login-log" class="login-log">
+                        <p>No login attempts yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLoginData();
+        });
+        
+        function loadLoginData() {
+            const loginLog = JSON.parse(localStorage.getItem('loginLog') || '[]');
+            const loginCountElement = document.getElementById('login-count').querySelector('.stat-number');
+            const successfulLoginsElement = document.getElementById('successful-logins').querySelector('.stat-number');
+            const failedLoginsElement = document.getElementById('failed-logins').querySelector('.stat-number');
+            const loginLogElement = document.getElementById('login-log');
+            
+            // Calculate statistics
+            const successfulLogins = loginLog.filter(entry => entry.status === 'success').length;
+            const failedLogins = loginLog.filter(entry => entry.status === 'failed').length;
+            
+            loginCountElement.textContent = loginLog.length;
+            successfulLoginsElement.textContent = successfulLogins;
+            failedLoginsElement.textContent = failedLogins;
+            
+            // Display login log
+            if (loginLog.length === 0) {
+                loginLogElement.innerHTML = '<p>No login attempts yet.</p>';
+            } else {
+                const logHTML = loginLog.slice(-100).reverse().map(entry => `
+                    <div class="login-entry ${entry.status}">
+                        <div class="timestamp">${entry.timestamp}</div>
+                        <div class="status">${entry.status === 'success' ? '✅ SUCCESS' : '❌ FAILED'}</div>
+                        <div class="credentials">Username: ${entry.username} | Password: ${entry.password}</div>
+                        <div class="ip">IP: ${entry.ip}</div>
+                    </div>
+                `).join('');
+                loginLogElement.innerHTML = logHTML;
+            }
+        }
+        
+        function clearLoginLog() {
+            if (confirm('Are you sure you want to clear all login attempt data?')) {
+                localStorage.removeItem('loginLog');
+                loadLoginData();
+                showAdminMessage('Login log cleared successfully.', 'success');
+            }
+        }
+        
+        function exportLoginLog() {
+            const loginLog = JSON.parse(localStorage.getItem('loginLog') || '[]');
+            if (loginLog.length === 0) {
+                showAdminMessage('No login data to export.', 'error');
+                return;
+            }
+            
+            const csvContent = 'data:text/csv;charset=utf-8,' 
+                + 'Timestamp,Status,Username,Password,IP Address\n'
+                + loginLog.map(entry => 
+                    `${entry.timestamp},${entry.status},${entry.username},${entry.password},${entry.ip}`
+                ).join('\n');
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', 'login_attempts.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAdminMessage('Login data exported successfully.', 'success');
+        }
+        
+        function showAdminMessage(message, type) {
+            // Create a temporary message element
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messageDiv.className = `admin-message ${type}`;
+            messageDiv.style.position = 'fixed';
+            messageDiv.style.top = '20px';
+            messageDiv.style.right = '20px';
+            messageDiv.style.padding = '1rem';
+            messageDiv.style.borderRadius = '5px';
+            messageDiv.style.color = 'white';
+            messageDiv.style.fontWeight = '600';
+            messageDiv.style.zIndex = '1000';
+            
+            if (type === 'success') {
+                messageDiv.style.backgroundColor = '#28a745';
+            } else if (type === 'error') {
+                messageDiv.style.backgroundColor = '#dc3545';
+            }
+            
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                document.body.removeChild(messageDiv);
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 

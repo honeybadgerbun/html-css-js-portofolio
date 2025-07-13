@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Traffic - Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="media_queries.css">
+</head>
+<body>
+    <nav id="desktop-nav">
+        <div class="logo">Admin Panel</div>
+        <div>
+            <ul class="nav-links">
+                <li><a href="admin.html">Dashboard</a></li>
+                <li><a href="network-traffic.html">Network Traffic</a></li>
+                <li><a href="login-traffic.html">Login Traffic</a></li>
+                <li><a href="admin.html#blog-panel">Blog Panel</a></li>
+            </ul>
+        </div>
+    </nav>
+    <nav id="hamburger-nav">
+        <div class="logo">Admin Panel</div>
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="menu-links">
+                <li><a href="admin.html" onclick="toggleMenu()">Dashboard</a></li>
+                <li><a href="network-traffic.html" onclick="toggleMenu()">Network Traffic</a></li>
+                <li><a href="login-traffic.html" onclick="toggleMenu()">Login Traffic</a></li>
+                <li><a href="admin.html#blog-panel" onclick="toggleMenu()">Blog Panel</a></li>
+            </div>
+        </div>
+    </nav>
+
+    <section id="admin-section">
+        <div class="admin-container">
+            <h1>Network Traffic Monitoring</h1>
+            <p>Monitor and analyze website traffic across all pages.</p>
+            
+            <div class="admin-stats">
+                <h2>Website Statistics</h2>
+                <div class="stats-grid">
+                    <div id="total-visits" class="stat-box">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Total Visits</span>
+                    </div>
+                    <div id="unique-visitors" class="stat-box">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Unique Visitors</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="traffic-monitoring">
+                <h2>Network Traffic Log</h2>
+                <div class="traffic-filters">
+                    <div class="filter-group">
+                        <label>Page Type:</label>
+                        <div class="page-type-checkboxes">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="page-portfolio" value="portfolio" checked onchange="applyFilters()">
+                                <label for="page-portfolio">Portfolio</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="page-blog" value="blog" checked onchange="applyFilters()">
+                                <label for="page-blog">Blog</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="page-article" value="article" checked onchange="applyFilters()">
+                                <label for="page-article">Articles</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="page-unknown" value="unknown" checked onchange="applyFilters()">
+                                <label for="page-unknown">Unknown</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <label for="date-filter">Date Range:</label>
+                        <select id="date-filter" onchange="applyFilters()">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="week">Last 7 Days</option>
+                            <option value="month">Last 30 Days</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="ip-filter">IP Address:</label>
+                        <input type="text" id="ip-filter" placeholder="Enter IP address" onkeyup="applyFilters()">
+                    </div>
+                    <div class="filter-group">
+                        <label for="search-filter">Search:</label>
+                        <input type="text" id="search-filter" placeholder="Search in logs..." onkeyup="applyFilters()">
+                    </div>
+                </div>
+                <div class="traffic-controls">
+                    <button onclick="clearTrafficLog()" class="btn btn-color-2">Clear Log</button>
+                    <button onclick="exportTrafficLog()" class="btn btn-color-1">Export Data</button>
+                    <button onclick="resetFilters()" class="btn btn-color-2">Reset Filters</button>
+                </div>
+                <div class="traffic-stats">
+                    <span id="filtered-count">Showing 0 entries</span>
+                </div>
+                <div class="traffic-log-container">
+                    <div id="traffic-log" class="traffic-log">
+                        <p>No traffic data yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTrafficData();
+        });
+        
+        function loadTrafficData() {
+            const trafficLog = JSON.parse(localStorage.getItem('trafficLog') || '[]');
+            const totalVisits = document.getElementById('total-visits').querySelector('.stat-number');
+            const uniqueVisitors = document.getElementById('unique-visitors').querySelector('.stat-number');
+            
+            // Calculate statistics
+            const uniqueIPs = new Set(trafficLog.map(entry => entry.ip));
+            totalVisits.textContent = trafficLog.length;
+            uniqueVisitors.textContent = uniqueIPs.size;
+            
+            // Apply filters and display
+            applyFilters();
+        }
+        
+        function applyFilters() {
+            const trafficLog = JSON.parse(localStorage.getItem('trafficLog') || '[]');
+            const dateFilter = document.getElementById('date-filter').value;
+            const ipFilter = document.getElementById('ip-filter').value.toLowerCase();
+            const searchFilter = document.getElementById('search-filter').value.toLowerCase();
+            const trafficLogElement = document.getElementById('traffic-log');
+            const filteredCountElement = document.getElementById('filtered-count');
+            
+            let filteredLog = trafficLog;
+            
+            // Filter by page type using checkboxes
+            const selectedPageTypes = [];
+            const checkboxes = document.querySelectorAll('.page-type-checkboxes input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                selectedPageTypes.push(checkbox.value);
+            });
+            
+            if (selectedPageTypes.length > 0) {
+                filteredLog = filteredLog.filter(entry => selectedPageTypes.includes(entry.pageType || 'unknown'));
+            }
+            
+            // Filter by date range
+            if (dateFilter !== 'all') {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                const weekAgo = new Date(today);
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                const monthAgo = new Date(today);
+                monthAgo.setDate(monthAgo.getDate() - 30);
+                
+                filteredLog = filteredLog.filter(entry => {
+                    const entryDate = new Date(entry.timestamp);
+                    switch (dateFilter) {
+                        case 'today':
+                            return entryDate >= today;
+                        case 'yesterday':
+                            return entryDate >= yesterday && entryDate < today;
+                        case 'week':
+                            return entryDate >= weekAgo;
+                        case 'month':
+                            return entryDate >= monthAgo;
+                        default:
+                            return true;
+                    }
+                });
+            }
+            
+            // Filter by IP address
+            if (ipFilter) {
+                filteredLog = filteredLog.filter(entry => 
+                    entry.ip.toLowerCase().includes(ipFilter)
+                );
+            }
+            
+            // Filter by search term
+            if (searchFilter) {
+                filteredLog = filteredLog.filter(entry => 
+                    entry.page.toLowerCase().includes(searchFilter) ||
+                    entry.ip.toLowerCase().includes(searchFilter) ||
+                    entry.timestamp.toLowerCase().includes(searchFilter)
+                );
+            }
+            
+            // Display filtered results
+            if (filteredLog.length === 0) {
+                trafficLogElement.innerHTML = '<p>No traffic data matching the filters.</p>';
+            } else {
+                const logHTML = filteredLog.slice(-100).reverse().map(entry => `
+                    <div class="traffic-entry ${entry.pageType}">
+                        <div class="timestamp">${entry.timestamp}</div>
+                        <div class="page">${entry.page}</div>
+                        <div class="ip">IP: ${entry.ip}</div>
+                    </div>
+                `).join('');
+                trafficLogElement.innerHTML = logHTML;
+            }
+            
+            // Update filtered count
+            filteredCountElement.textContent = `Showing ${filteredLog.length} of ${trafficLog.length} entries`;
+        }
+        
+        function resetFilters() {
+            // Reset all checkboxes to checked
+            document.querySelectorAll('.page-type-checkboxes input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            document.getElementById('date-filter').value = 'all';
+            document.getElementById('ip-filter').value = '';
+            document.getElementById('search-filter').value = '';
+            applyFilters();
+        }
+        
+        function clearTrafficLog() {
+            if (confirm('Are you sure you want to clear all traffic data?')) {
+                localStorage.removeItem('trafficLog');
+                loadTrafficData();
+                showAdminMessage('Traffic log cleared successfully.', 'success');
+            }
+        }
+        
+        function exportTrafficLog() {
+            const trafficLog = JSON.parse(localStorage.getItem('trafficLog') || '[]');
+            if (trafficLog.length === 0) {
+                showAdminMessage('No traffic data to export.', 'error');
+                return;
+            }
+            
+            // Apply current filters to get filtered data
+            const dateFilter = document.getElementById('date-filter').value;
+            const ipFilter = document.getElementById('ip-filter').value.toLowerCase();
+            const searchFilter = document.getElementById('search-filter').value.toLowerCase();
+            
+            let filteredLog = trafficLog;
+            
+            // Apply same filtering logic as applyFilters()
+            const selectedPageTypes = [];
+            const checkboxes = document.querySelectorAll('.page-type-checkboxes input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                selectedPageTypes.push(checkbox.value);
+            });
+            
+            if (selectedPageTypes.length > 0) {
+                filteredLog = filteredLog.filter(entry => selectedPageTypes.includes(entry.pageType || 'unknown'));
+            }
+            
+            if (dateFilter !== 'all') {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                const weekAgo = new Date(today);
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                const monthAgo = new Date(today);
+                monthAgo.setDate(monthAgo.getDate() - 30);
+                
+                filteredLog = filteredLog.filter(entry => {
+                    const entryDate = new Date(entry.timestamp);
+                    switch (dateFilter) {
+                        case 'today':
+                            return entryDate >= today;
+                        case 'yesterday':
+                            return entryDate >= yesterday && entryDate < today;
+                        case 'week':
+                            return entryDate >= weekAgo;
+                        case 'month':
+                            return entryDate >= monthAgo;
+                        default:
+                            return true;
+                    }
+                });
+            }
+            
+            if (ipFilter) {
+                filteredLog = filteredLog.filter(entry => 
+                    entry.ip.toLowerCase().includes(ipFilter)
+                );
+            }
+            
+            if (searchFilter) {
+                filteredLog = filteredLog.filter(entry => 
+                    entry.page.toLowerCase().includes(searchFilter) ||
+                    entry.ip.toLowerCase().includes(searchFilter) ||
+                    entry.timestamp.toLowerCase().includes(searchFilter)
+                );
+            }
+            
+            if (filteredLog.length === 0) {
+                showAdminMessage('No filtered data to export.', 'error');
+                return;
+            }
+            
+            const csvContent = 'data:text/csv;charset=utf-8,' 
+                + 'Timestamp,Page,IP Address,Page Type\n'
+                + filteredLog.map(entry => 
+                    `${entry.timestamp},${entry.page},${entry.ip},${entry.pageType}`
+                ).join('\n');
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', 'filtered_traffic_log.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAdminMessage(`Exported ${filteredLog.length} filtered entries successfully.`, 'success');
+        }
+        
+        function showAdminMessage(message, type) {
+            // Create a temporary message element
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messageDiv.className = `admin-message ${type}`;
+            messageDiv.style.position = 'fixed';
+            messageDiv.style.top = '20px';
+            messageDiv.style.right = '20px';
+            messageDiv.style.padding = '1rem';
+            messageDiv.style.borderRadius = '5px';
+            messageDiv.style.color = 'white';
+            messageDiv.style.fontWeight = '600';
+            messageDiv.style.zIndex = '1000';
+            
+            if (type === 'success') {
+                messageDiv.style.backgroundColor = '#28a745';
+            } else if (type === 'error') {
+                messageDiv.style.backgroundColor = '#dc3545';
+            }
+            
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                document.body.removeChild(messageDiv);
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 

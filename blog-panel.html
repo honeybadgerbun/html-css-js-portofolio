@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Panel - Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="media_queries.css">
+</head>
+<body>
+    <nav id="desktop-nav">
+        <div class="logo">Admin Panel</div>
+        <div>
+            <ul class="nav-links">
+                <li><a href="admin.html">Dashboard</a></li>
+                <li><a href="network-traffic.html">Network Traffic</a></li>
+                <li><a href="login-traffic.html">Login Traffic</a></li>
+                <li><a href="blog-panel.html">Blog Panel</a></li>
+            </ul>
+        </div>
+    </nav>
+    <nav id="hamburger-nav">
+        <div class="logo">Admin Panel</div>
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="menu-links">
+                <li><a href="admin.html" onclick="toggleMenu()">Dashboard</a></li>
+                <li><a href="network-traffic.html" onclick="toggleMenu()">Network Traffic</a></li>
+                <li><a href="login-traffic.html" onclick="toggleMenu()">Login Traffic</a></li>
+                <li><a href="blog-panel.html" onclick="toggleMenu()">Blog Panel</a></li>
+            </div>
+        </div>
+    </nav>
+
+    <section id="admin-section">
+        <div class="admin-container">
+            <h1>Blog Panel</h1>
+            <p>Manage your blog articles and newsletter updates.</p>
+            
+            <div class="blog-stats">
+                <h2>Blog Statistics</h2>
+                <div class="stats-grid">
+                    <div id="article-count" class="stat-box">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Total Articles</span>
+                    </div>
+                    <div id="published-count" class="stat-box">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Published</span>
+                    </div>
+                    <div id="draft-count" class="stat-box">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Drafts</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="article-management">
+                <h2>Add New Article</h2>
+                <form id="article-form" onsubmit="handleArticleSubmit(event)">
+                    <div class="form-group">
+                        <label for="article-title">Article Title:</label>
+                        <input type="text" id="article-title" required placeholder="Enter article title" />
+                    </div>
+                    <div class="form-group">
+                        <label for="article-subtitle">Subtitle:</label>
+                        <input type="text" id="article-subtitle" placeholder="Enter article subtitle" />
+                    </div>
+                    <div class="form-group">
+                        <label for="article-image">Image (Required):</label>
+                        <div class="image-input-group">
+                            <input type="url" id="article-image-url" placeholder="Enter image URL" />
+                            <span class="image-input-separator">OR</span>
+                            <input type="file" id="article-image-file" accept="image/*" />
+                        </div>
+                        <div id="image-preview" class="image-preview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="article-content">Article Content:</label>
+                        <textarea id="article-content" required placeholder="Write your article content here..." rows="10"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="article-status">Status:</label>
+                        <select id="article-status" required>
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="article-tags">Tags (comma-separated):</label>
+                        <input type="text" id="article-tags" placeholder="cybersecurity, technology, career" />
+                    </div>
+                    <button type="submit" class="btn btn-color-1">Publish Article</button>
+                </form>
+                <div id="article-message" class="admin-message"></div>
+            </div>
+            
+            <div class="newsletter-section">
+                <h2>Send Newsletter Update</h2>
+                <form id="newsletter-form" onsubmit="handleNewsletterSend(event)">
+                    <div class="form-group">
+                        <label for="blog-title">Blog Post Title:</label>
+                        <input type="text" id="blog-title" required placeholder="Enter blog post title" />
+                    </div>
+                    <div class="form-group">
+                        <label for="blog-url">Blog Post URL:</label>
+                        <input type="url" id="blog-url" required placeholder="Enter blog post URL" />
+                    </div>
+                    <button type="submit" class="btn btn-color-1">Send Newsletter Update</button>
+                </form>
+                <div id="newsletter-message" class="admin-message"></div>
+            </div>
+            
+            <div class="articles-list">
+                <h2>Manage Articles</h2>
+                <div class="articles-controls">
+                    <button onclick="exportArticles()" class="btn btn-color-1">Export Articles</button>
+                    <button onclick="clearAllArticles()" class="btn btn-color-2">Clear All Articles</button>
+                </div>
+                <div id="articles-list">
+                    <p>No articles yet.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadArticlesData();
+        });
+        
+        function loadArticlesData() {
+            const articles = JSON.parse(localStorage.getItem('blogArticles') || '[]');
+            const articleCountElement = document.getElementById('article-count').querySelector('.stat-number');
+            const publishedCountElement = document.getElementById('published-count').querySelector('.stat-number');
+            const draftCountElement = document.getElementById('draft-count').querySelector('.stat-number');
+            const articlesListElement = document.getElementById('articles-list');
+            
+            // Calculate statistics
+            const publishedArticles = articles.filter(article => article.status === 'published');
+            const draftArticles = articles.filter(article => article.status === 'draft');
+            
+            articleCountElement.textContent = articles.length;
+            publishedCountElement.textContent = publishedArticles.length;
+            draftCountElement.textContent = draftArticles.length;
+            
+            // Display articles list
+            if (articles.length === 0) {
+                articlesListElement.innerHTML = '<p>No articles yet.</p>';
+            } else {
+                const articlesHTML = articles.reverse().map((article, index) => `
+                    <div class="article-item ${article.status}">
+                        <div class="article-header">
+                            <h3>${article.title}</h3>
+                            <span class="article-status ${article.status}">${article.status.toUpperCase()}</span>
+                        </div>
+                        <div class="article-meta">
+                            <span class="article-date">${article.date}</span>
+                            <span class="article-tags">${article.tags || 'No tags'}</span>
+                        </div>
+                        <div class="article-preview">
+                            ${article.content.substring(0, 150)}${article.content.length > 150 ? '...' : ''}
+                        </div>
+                        <div class="article-actions">
+                            <button onclick="editArticle(${index})" class="btn btn-color-1">Edit</button>
+                            <button onclick="deleteArticle(${index})" class="btn btn-color-2">Delete</button>
+                            <button onclick="toggleArticleStatus(${index})" class="btn btn-color-1">
+                                ${article.status === 'published' ? 'Unpublish' : 'Publish'}
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                articlesListElement.innerHTML = articlesHTML;
+            }
+        }
+        
+        function handleArticleSubmit(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('article-title').value.trim();
+            const subtitle = document.getElementById('article-subtitle').value.trim();
+            const imageUrl = document.getElementById('article-image-url').value.trim();
+            const imageFile = document.getElementById('article-image-file').files[0];
+            const content = document.getElementById('article-content').value.trim();
+            const status = document.getElementById('article-status').value;
+            const tags = document.getElementById('article-tags').value.trim();
+            
+            if (!title || !content) {
+                showArticleMessage('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            if (!imageUrl && !imageFile) {
+                showArticleMessage('Please provide either an image URL or upload an image file.', 'error');
+                return;
+            }
+            
+            // Handle image file upload
+            let finalImageUrl = imageUrl;
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    finalImageUrl = e.target.result; // Convert to base64
+                    saveArticle(title, subtitle, finalImageUrl, content, status, tags);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                saveArticle(title, subtitle, finalImageUrl, content, status, tags);
+            }
+        }
+        
+        function saveArticle(title, subtitle, imageUrl, content, status, tags) {
+            // Create article object
+            const article = {
+                id: Date.now(),
+                title: title,
+                subtitle: subtitle,
+                imageUrl: imageUrl,
+                content: content,
+                status: status,
+                tags: tags,
+                date: new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+            
+            // Save to localStorage
+            const articles = JSON.parse(localStorage.getItem('blogArticles') || '[]');
+            articles.push(article);
+            localStorage.setItem('blogArticles', JSON.stringify(articles));
+            
+            // If article is published, add to blog page
+            if (status === 'published') {
+                addArticleToBlogPage(article);
+            }
+            
+            // Reset form
+            document.getElementById('article-form').reset();
+            
+            // Reload data
+            loadArticlesData();
+            
+            showArticleMessage('Article saved successfully!', 'success');
+        }
+        
+        function addArticleToBlogPage(article) {
+            // Get existing blog articles from localStorage
+            const blogArticles = JSON.parse(localStorage.getItem('blogPageArticles') || '[]');
+            
+            // Add new article to the beginning of the list
+            blogArticles.unshift(article);
+            
+            // Keep only the latest 10 articles on the blog page
+            if (blogArticles.length > 10) {
+                blogArticles.splice(10);
+            }
+            
+            // Save back to localStorage
+            localStorage.setItem('blogPageArticles', JSON.stringify(blogArticles));
+        }
+        
+        function editArticle(index) {
+            const articles = JSON.parse(localStorage.getItem('blogArticles') || '[]');
+            const article = articles[index];
+            
+            // Populate form with article data
+            document.getElementById('article-title').value = article.title;
+            document.getElementById('article-subtitle').value = article.subtitle || '';
+            document.getElementById('article-image-url').value = article.imageUrl || '';
+            document.getElementById('article-content').value = article.content;
+            document.getElementById('article-status').value = article.status;
+            document.getElementById('article-tags').value = article.tags || '';
+            
+            // Show image preview
+            if (article.imageUrl) {
+                showImagePreview(article.imageUrl);
+            }
+            
+            // Remove the old article
+            articles.splice(index, 1);
+            localStorage.setItem('blogArticles', JSON.stringify(articles));
+            
+            // Update the form submit handler to update instead of create
+            const form = document.getElementById('article-form');
+            form.onsubmit = function(event) {
+                event.preventDefault();
+                updateArticle(article.id);
+            };
+            
+            // Change button text
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.textContent = 'Update Article';
+            
+            showArticleMessage('Article loaded for editing. Update and submit to save changes.', 'info');
+        }
+        
+        function updateArticle(articleId) {
+            const title = document.getElementById('article-title').value.trim();
+            const subtitle = document.getElementById('article-subtitle').value.trim();
+            const imageUrl = document.getElementById('article-image-url').value.trim();
+            const imageFile = document.getElementById('article-image-file').files[0];
+            const content = document.getElementById('article-content').value.trim();
+            const status = document.getElementById('article-status').value;
+            const tags = document.getElementById('article-tags').value.trim();
+            
+            if (!title || !content) {
+                showArticleMessage('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            if (!imageUrl && !imageFile) {
+                showArticleMessage('Please provide either an image URL or upload an image file.', 'error');
+                return;
+            }
+            
+            // Handle image file upload for update
+            let finalImageUrl = imageUrl;
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    finalImageUrl = e.target.result; // Convert to base64
+                    saveUpdatedArticle(articleId, title, subtitle, finalImageUrl, content, status, tags);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                saveUpdatedArticle(articleId, title, subtitle, finalImageUrl, content, status, tags);
+            }
+        }
+        
+        function saveUpdatedArticle(articleId, title, subtitle, imageUrl, content, status, tags) {
+            // Create updated article object
+            const updatedArticle = {
+                id: articleId,
+                title: title,
+                subtitle: subtitle,
+                imageUrl: imageUrl,
+                content: content,
+                status: status,
+                tags: tags,
+                date: new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+            
+            // Save to localStorage
+            const articles = JSON.parse(localStorage.getItem('blogArticles') || '[]');
+            articles.push(updatedArticle);
+            localStorage.setItem('blogArticles', JSON.stringify(articles));
+            
+            // If article is published, update blog page
+            if (status === 'published') {
+                updateArticleInBlogPage(updatedArticle);
+            }
+            
+            // Reset form and handler
+            document.getElementById('article-form').reset();
+            const form = document.getElementById('article-form');
+            form.onsubmit = handleArticleSubmit;
+            
+            // Change button text back
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.textContent = 'Publish Article';
+            
+            // Reload data
+            loadArticlesData();
+            
+            showArticleMessage('Article updated successfully!', 'success');
+        }
+        
+        function updateArticleInBlogPage(updatedArticle) {
+            // Get existing blog articles from localStorage
+            const blogArticles = JSON.parse(localStorage.getItem('blogPageArticles') || '[]');
+            
+            // Find and update the article
+            const index = blogArticles.findIndex(article => article.id === updatedArticle.id);
+            if (index !== -1) {
+                blogArticles[index] = updatedArticle;
+            } else {
+                // If not found, add to the beginning
+                blogArticles.unshift(updatedArticle);
+            }
+            
+            // Keep only the latest 10 articles
+            if (blogArticles.length > 10) {
+                blogArticles.splice(10);
+            }
+            
+            // Save back to localStorage
+            localStorage.setItem('blogPageArticles', JSON.stringify(blogArticles));
+        }
+        
+        function showImagePreview(imageUrl) {
+            const previewDiv = document.getElementById('image-preview');
+            previewDiv.innerHTML = `<img src="${imageUrl}" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 4px;" />`;
+        }
+        
+        // Add event listeners for image preview
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageUrlInput = document.getElementById('article-image-url');
+            const imageFileInput = document.getElementById('article-image-file');
+            
+            imageUrlInput.addEventListener('input', function() {
+                const url = this.value.trim();
+                if (url) {
+                    showImagePreview(url);
+                } else {
+                    document.getElementById('image-preview').innerHTML = '';
+                }
+            });
+            
+            imageFileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        showImagePreview(e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    document.getElementById('image-preview').innerHTML = '';
+                }
+            });
+        });
+        
+        function deleteArticle(index) {
+            if (confirm('Are you sure you want to delete this article?')) {
+                const articles = JSON.parse(localStorage.getItem('blogArticles') || '[]');
+                articles.splice(index, 1);
+                localStorage.setItem('blogArticles', JSON.stringify(articles));
+                loadArticlesData();
+                showArticleMessage('Article deleted successfully.', 'success');
+            }
+        }
+        
+        function toggleArticleStatus(index) {
+            const articles = JSON.parse(localStorage.getItem('blogArticles') || '[]');
+            const article = articles[index];
+            article.status = article.status === 'published' ? 'draft' : 'published';
+            localStorage.setItem('blogArticles', JSON.stringify(articles));
+            loadArticlesData();
+            showArticleMessage(`Article ${article.status === 'published' ? 'published' : 'unpublished'} successfully.`, 'success');
+        }
+        
+        function exportArticles() {
+            const articles = JSON.parse(localStorage.getItem('blogArticles') || '[]');
+            if (articles.length === 0) {
+                showArticleMessage('No articles to export.', 'error');
+                return;
+            }
+            
+            const csvContent = 'data:text/csv;charset=utf-8,' 
+                + 'Title,Subtitle,Status,Tags,Date,Content\n'
+                + articles.map(article => 
+                    `"${article.title}","${article.subtitle || ''}","${article.status}","${article.tags || ''}","${article.date}","${article.content.replace(/"/g, '""')}"`
+                ).join('\n');
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', 'blog_articles.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showArticleMessage('Articles exported successfully.', 'success');
+        }
+        
+        function clearAllArticles() {
+            if (confirm('Are you sure you want to delete all articles? This action cannot be undone.')) {
+                localStorage.removeItem('blogArticles');
+                loadArticlesData();
+                showArticleMessage('All articles deleted successfully.', 'success');
+            }
+        }
+        
+        function handleNewsletterSend(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('blog-title').value.trim();
+            const url = document.getElementById('blog-url').value.trim();
+            
+            if (!title || !url) {
+                showNewsletterMessage('Please fill in all fields.', 'error');
+                return;
+            }
+            
+            showNewsletterMessage('Sending newsletter update...', 'loading');
+            
+            // Call the newsletter update function
+            sendNewsletterUpdate(title, url);
+            
+            setTimeout(() => {
+                showNewsletterMessage('Newsletter update sent successfully!', 'success');
+                document.getElementById('newsletter-form').reset();
+            }, 2000);
+        }
+        
+        function showArticleMessage(message, type) {
+            const messageDiv = document.getElementById('article-message');
+            messageDiv.textContent = message;
+            messageDiv.className = `admin-message ${type}`;
+            
+            setTimeout(() => {
+                messageDiv.textContent = '';
+                messageDiv.className = 'admin-message';
+            }, 5000);
+        }
+        
+        function showNewsletterMessage(message, type) {
+            const messageDiv = document.getElementById('newsletter-message');
+            messageDiv.textContent = message;
+            messageDiv.className = `admin-message ${type}`;
+            
+            setTimeout(() => {
+                messageDiv.textContent = '';
+                messageDiv.className = 'admin-message';
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 
