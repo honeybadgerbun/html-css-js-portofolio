@@ -231,7 +231,7 @@
                 </div>
             </div>
         </div>
-        <img src="./assets/arrow.png" alt="Arrow Icon" class="icon arrow" onclick="location.href='./#contact'" />
+        <img src="./assets/arrow.png" alt="Arrow Icon" class="icon arrow" onclick="location.href='./#blog'" />
     </section>
     <section id="blog">
         <p class="section__text__p1">Browse My Recent</p>
@@ -282,6 +282,19 @@
             </a>
         </div>
         <img src="./assets/arrow.png" alt="Arrow Icon" class="icon arrow" onclick="location.href='./#contact'" />
+    </section>
+    <section id="newsletter">
+        <div class="newsletter-container">
+            <h2>Stay Updated</h2>
+            <p>Subscribe to my newsletter for the latest insights on cybersecurity, technology, and career development.</p>
+            <div class="newsletter-form">
+                <form id="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+                    <input type="email" placeholder="Enter your email address" class="newsletter-input" id="newsletter-email" required />
+                    <button type="submit" class="btn btn-color-1">Subscribe</button>
+                </form>
+            </div>
+            <div id="newsletter-message" class="newsletter-message"></div>
+        </div>
     </section>
     <section id="contact">
         <p class="section__text__p1">Get in Touch</p>
