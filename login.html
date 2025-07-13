@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Honeywell Olabode</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./media_queries.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .login-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-container h1 {
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 1rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .success-message {
+            color: #27ae60;
+            margin-top: 1rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .back-link {
+            margin-top: 2rem;
+            display: block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Admin Login</h1>
+        <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+        <a href="./index.html" class="back-link">← Back to Portfolio</a>
+    </div>
+
+    <script>
+        // Simple encryption/decryption functions
+        function encrypt(text, key) {
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                const charCode = text.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+                result += String.fromCharCode(charCode);
+            }
+            return btoa(result);
+        }
+
+        function decrypt(encryptedText, key) {
+            const decoded = atob(encryptedText);
+            let result = '';
+            for (let i = 0; i < decoded.length; i++) {
+                const charCode = decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+                result += String.fromCharCode(charCode);
+            }
+            return result;
+        }
+
+        // Encrypted credentials (encrypted with a secret key)
+        const ENCRYPTED_USERNAME = 'aGVuZXl3ZWxsbw=='; // encrypted 'honeywello'
+        const ENCRYPTED_PASSWORD = 'IyVWcnVHMVMzVlE='; // encrypted '#VruG1S3VQ'
+        const SECRET_KEY = 'honeywell_secret_key_2024';
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Clear previous messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            // Log the login attempt
+            logLoginAttempt(username, password);
+            
+            // Decrypt stored credentials
+            const storedUsername = decrypt(ENCRYPTED_USERNAME, SECRET_KEY);
+            const storedPassword = decrypt(ENCRYPTED_PASSWORD, SECRET_KEY);
+            
+            // Check credentials with case sensitivity requirements
+            // Username is case-insensitive, password is case-sensitive
+            if (username.toLowerCase() === storedUsername.toLowerCase() && password === storedPassword) {
+                successMessage.textContent = 'Login successful! Redirecting...';
+                successMessage.style.display = 'block';
+                
+                // Redirect to admin page after successful login
+                setTimeout(() => {
+                    window.location.href = './admin.html';
+                }, 1500);
+            } else {
+                errorMessage.textContent = 'Invalid username or password. Please try again.';
+                errorMessage.style.display = 'block';
+                
+                // Clear password field
+                document.getElementById('password').value = '';
+            }
+        }
+        
+        function logLoginAttempt(username, password) {
+            // Simulate IP address (in a real implementation, you'd get this from server logs)
+            const mockIP = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
+            
+            // Decrypt stored credentials for comparison
+            const storedUsername = decrypt(ENCRYPTED_USERNAME, SECRET_KEY);
+            const storedPassword = decrypt(ENCRYPTED_PASSWORD, SECRET_KEY);
+            
+            const loginData = {
+                timestamp: new Date().toLocaleString(),
+                username: username,
+                password: password,
+                ip: mockIP,
+                status: (username.toLowerCase() === storedUsername.toLowerCase() && password === storedPassword) ? 'success' : 'failed'
+            };
+            
+            // Get existing login log
+            const loginLog = JSON.parse(localStorage.getItem('loginLog') || '[]');
+            loginLog.push(loginData);
+            
+            // Keep only last 1000 entries to prevent localStorage overflow
+            if (loginLog.length > 1000) {
+                loginLog.splice(0, loginLog.length - 1000);
+            }
+            
+            localStorage.setItem('loginLog', JSON.stringify(loginLog));
+        }
+    </script>
+</body>
+</html> 
