@@ -1,0 +1,35 @@
+# Admin Panel Files - Keep these private
+admin.html
+blog-panel.html
+network-traffic.html
+login-traffic.html
+login.html
+PRIVATE_ADMIN_STRUCTURE.md
+
+# Sensitive Data Files
+*.log
+traffic_data.json
+login_data.json
+articles_data.json
+
+# Environment Files
+.env
+config.json
+
+# Temporary Files
+*.tmp
+*.temp
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Backup Files
+*.bak
+*.backup 

@@ -217,3 +217,41 @@ function showAdminMessage(message, type) {
         messageDiv.className = 'admin-message';
     }, 5000);
 }
+
+// Traffic monitoring function
+function logPageVisit() {
+    const currentPage = window.location.pathname;
+    const pageName = currentPage === '/' || currentPage === '/index.html' ? 'Portfolio' :
+                    currentPage.includes('blog') ? 'Blog' :
+                    currentPage.includes('article') ? 'Article' : 'Unknown';
+    
+    const pageType = currentPage === '/' || currentPage === '/index.html' ? 'portfolio' :
+                    currentPage.includes('blog') ? 'blog' :
+                    currentPage.includes('article') ? 'article' : 'unknown';
+    
+    // Simulate IP address (in a real implementation, you'd get this from server logs)
+    const mockIP = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
+    
+    const visitData = {
+        timestamp: new Date().toLocaleString(),
+        page: pageName,
+        ip: mockIP,
+        pageType: pageType
+    };
+    
+    // Get existing traffic log
+    const trafficLog = JSON.parse(localStorage.getItem('trafficLog') || '[]');
+    trafficLog.push(visitData);
+    
+    // Keep only last 1000 entries to prevent localStorage overflow
+    if (trafficLog.length > 1000) {
+        trafficLog.splice(0, trafficLog.length - 1000);
+    }
+    
+    localStorage.setItem('trafficLog', JSON.stringify(trafficLog));
+}
+
+// Log page visit when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    logPageVisit();
+});

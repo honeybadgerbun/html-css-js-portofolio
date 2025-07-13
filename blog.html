@@ -47,32 +47,8 @@
 
     <section id="blog-posts">
         <div class="experience-details-container">
-            <div class="blog-posts-grid">
-                <div class="blog-post featured">
-                    <div class="post-image">
-                        <img src="./assets/tipping_hat.png" alt="Hello World - Cybersecurity Journey" class="project-img" />
-                    </div>
-                    <div class="post-content">
-                        <div class="post-meta">
-                            <span class="post-date">July 11, 2025</span>
-                            <span class="post-category">Cybersecurity</span>
-                        </div>
-                        <h2 class="post-title">Hello World</h2>
-                        <p class="post-excerpt">
-                            Welcome to my cybersecurity journey! I'm excited to dive into the world of cybersecurity and share my experiences, learnings, and practices as I navigate this fascinating field. Join me as I track my progress and discoveries.
-                        </p>
-                        <div class="post-tags">
-                            <span class="tag">Cybersecurity</span>
-                            <span class="tag">Journey</span>
-                            <span class="tag">Learning</span>
-                        </div>
-                        <div class="btn-container">
-                            <a href="articles/hello_world_article.html" class="btn btn-color-2">
-                                Read Full Article
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            <div class="blog-posts-grid" id="dynamic-blog-posts">
+                <!-- Dynamic articles will be loaded here -->
             </div>
         </div>
     </section>
@@ -105,5 +81,176 @@
         <p>Copyright © 2025 Honeywell Olabode. All Rights Reserved.</p>
     </footer>
     <script src="script.js"></script>
+    <script>
+        // Load dynamic blog articles on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDynamicBlogArticles();
+        });
+        
+        function loadDynamicBlogArticles() {
+            const blogArticles = JSON.parse(localStorage.getItem('blogPageArticles') || '[]');
+            const blogPostsContainer = document.getElementById('dynamic-blog-posts');
+            
+            if (blogArticles.length === 0) {
+                // Show default article if no dynamic articles
+                blogPostsContainer.innerHTML = `
+                    <div class="blog-post featured">
+                        <div class="post-image">
+                            <img src="./assets/tipping_hat.png" alt="Hello World - Cybersecurity Journey" class="project-img" />
+                        </div>
+                        <div class="post-content">
+                            <div class="post-meta">
+                                <span class="post-date">July 11, 2025</span>
+                                <span class="post-category">Cybersecurity</span>
+                            </div>
+                            <h2 class="post-title">Hello World</h2>
+                            <p class="post-excerpt">
+                                Welcome to my cybersecurity journey! I'm excited to dive into the world of cybersecurity and share my experiences, learnings, and practices as I navigate this fascinating field. Join me as I track my progress and discoveries.
+                            </p>
+                            <div class="post-tags">
+                                <span class="tag">Cybersecurity</span>
+                                <span class="tag">Journey</span>
+                                <span class="tag">Learning</span>
+                            </div>
+                            <div class="btn-container">
+                                <a href="articles/hello_world_article.html" class="btn btn-color-2">
+                                    Read Full Article
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Display dynamic articles
+                const articlesHTML = blogArticles.map((article, index) => `
+                    <div class="blog-post ${index === 0 ? 'featured' : ''}">
+                        <div class="post-image">
+                            <img src="${article.imageUrl}" alt="${article.title}" class="project-img" />
+                        </div>
+                        <div class="post-content">
+                            <div class="post-meta">
+                                <span class="post-date">${article.date}</span>
+                                <span class="post-category">${article.subtitle || 'Blog Post'}</span>
+                            </div>
+                            <h2 class="post-title">${article.title}</h2>
+                            <p class="post-excerpt">
+                                ${article.content.substring(0, 150)}${article.content.length > 150 ? '...' : ''}
+                            </p>
+                            <div class="post-tags">
+                                ${article.tags ? article.tags.split(',').map(tag => 
+                                    `<span class="tag">${tag.trim()}</span>`
+                                ).join('') : ''}
+                            </div>
+                            <div class="btn-container">
+                                <button onclick="viewArticle(${article.id})" class="btn btn-color-2">
+                                    Read Full Article
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                blogPostsContainer.innerHTML = articlesHTML;
+            }
+        }
+        
+        function viewArticle(articleId) {
+            // Get the article from localStorage
+            const allArticles = JSON.parse(localStorage.getItem('blogArticles') || '[]');
+            const article = allArticles.find(a => a.id === articleId);
+            
+            if (article) {
+                // Create a modal or new page to display the full article
+                const modal = document.createElement('div');
+                modal.className = 'article-modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>${article.title}</h2>
+                            <button onclick="closeModal()" class="close-btn">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <img src="${article.imageUrl}" alt="${article.title}" style="max-width: 100%; height: auto; margin-bottom: 1rem;" />
+                            <div class="article-meta">
+                                <span class="post-date">${article.date}</span>
+                                <span class="post-category">${article.subtitle || 'Blog Post'}</span>
+                            </div>
+                            <div class="article-content">
+                                ${article.content.split('\n').map(paragraph => 
+                                    `<p>${paragraph}</p>`
+                                ).join('')}
+                            </div>
+                            <div class="post-tags">
+                                ${article.tags ? article.tags.split(',').map(tag => 
+                                    `<span class="tag">${tag.trim()}</span>`
+                                ).join('') : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Add styles for modal
+                const style = document.createElement('style');
+                style.textContent = `
+                    .article-modal {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0, 0, 0, 0.8);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 1000;
+                    }
+                    .modal-content {
+                        background: white;
+                        padding: 2rem;
+                        border-radius: 8px;
+                        max-width: 800px;
+                        max-height: 90vh;
+                        overflow-y: auto;
+                        position: relative;
+                    }
+                    .modal-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 1rem;
+                        border-bottom: 1px solid #ddd;
+                        padding-bottom: 1rem;
+                    }
+                    .close-btn {
+                        background: none;
+                        border: none;
+                        font-size: 2rem;
+                        cursor: pointer;
+                        color: #666;
+                    }
+                    .close-btn:hover {
+                        color: #333;
+                    }
+                    .article-content {
+                        line-height: 1.6;
+                        margin: 1rem 0;
+                    }
+                    .article-content p {
+                        margin-bottom: 1rem;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+        
+        function closeModal() {
+            const modal = document.querySelector('.article-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+    </script>
   </body>
 </html> 

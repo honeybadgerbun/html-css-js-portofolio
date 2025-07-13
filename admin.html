@@ -10,18 +10,18 @@
   </head>
   <body>
     <nav id="desktop-nav">
-      <div class="logo">Honeywell Olabode</div>
+      <div class="logo">Admin Panel</div>
       <div>
             <ul class="nav-links">
-                <li><a href="index.html#about">About</a></li>
-                <li><a href="index.html#experience">Experience</a></li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="index.html#contact">Contact</a></li>
+                <li><a href="admin.html">Dashboard</a></li>
+                <li><a href="network-traffic.html">Network Traffic</a></li>
+                <li><a href="login-traffic.html">Login Traffic</a></li>
+                <li><a href="blog-panel.html">Blog Panel</a></li>
             </ul>
       </div>
     </nav>
     <nav id="hamburger-nav">
-        <div class="logo">Honeywell Olabode</div>
+        <div class="logo">Admin Panel</div>
         <div class="hamburger-menu">
             <div class="hamburger-icon" onclick="toggleMenu()">
               <span></span>
@@ -29,42 +29,30 @@
               <span></span>
             </div>
             <div class="menu-links">
-              <li><a href="index.html#about" onclick="toggleMenu()">About</a></li>
-              <li><a href="index.html#experience" onclick="toggleMenu()">Experience</a></li>
-              <li><a href="blog.html" onclick="toggleMenu()">Blog</a></li>
-              <li><a href="index.html#contact" onclick="toggleMenu()">Contact</a></li>
+              <li><a href="admin.html" onclick="toggleMenu()">Dashboard</a></li>
+              <li><a href="network-traffic.html" onclick="toggleMenu()">Network Traffic</a></li>
+              <li><a href="login-traffic.html" onclick="toggleMenu()">Login Traffic</a></li>
+              <li><a href="blog-panel.html" onclick="toggleMenu()">Blog Panel</a></li>
             </div>
         </div>
     </nav>
     
     <section id="admin-section">
         <div class="admin-container">
-            <h1>Blog Admin Panel</h1>
+            <h1>Admin Panel</h1>
             <p>Manage newsletter subscribers and send updates when new blog posts are published.</p>
             
             <div class="admin-stats">
                 <h2>Newsletter Statistics</h2>
-                <div id="subscriber-count" class="stat-box">
-                    <span class="stat-number">0</span>
-                    <span class="stat-label">Subscribers</span>
+                <div class="stats-grid">
+                    <div id="subscriber-count" class="stat-box">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Subscribers</span>
+                    </div>
                 </div>
             </div>
             
-            <div class="admin-actions">
-                <h2>Send Newsletter Update</h2>
-                <form id="newsletter-form" onsubmit="handleNewsletterSend(event)">
-                    <div class="form-group">
-                        <label for="blog-title">Blog Post Title:</label>
-                        <input type="text" id="blog-title" required placeholder="Enter blog post title" />
-                    </div>
-                    <div class="form-group">
-                        <label for="blog-url">Blog Post URL:</label>
-                        <input type="url" id="blog-url" required placeholder="Enter blog post URL" />
-                    </div>
-                    <button type="submit" class="btn btn-color-1">Send Newsletter Update</button>
-                </form>
-                <div id="admin-message" class="admin-message"></div>
-            </div>
+
             
             <div class="subscriber-list">
                 <h2>Current Subscribers</h2>
@@ -74,30 +62,16 @@
             </div>
         </div>
     </section>
-
-    <footer>
-        <nav id="footer-nav">
-            <div>
-                <ul class="nav-links">
-                    <li><a href="index.html#about">About</a></li>
-                    <li><a href="index.html#experience">Experience</a></li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="index.html#contact">Contact</a></li>
-                </ul>
-            </div>
-        </nav>
-        <p>Copyright © 2025 Honeywell Olabode. All Rights Reserved.</p>
-    </footer>
     <script src="script.js"></script>
     <script>
-        // Load subscriber data on page load
+        // Load data on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadSubscriberData();
         });
         
         function loadSubscriberData() {
             const subscribers = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
-            const countElement = document.querySelector('.stat-number');
+            const countElement = document.getElementById('subscriber-count').querySelector('.stat-number');
             const listElement = document.getElementById('subscribers-list');
             
             countElement.textContent = subscribers.length;
@@ -111,28 +85,7 @@
             }
         }
         
-        function handleNewsletterSend(event) {
-            event.preventDefault();
-            
-            const title = document.getElementById('blog-title').value.trim();
-            const url = document.getElementById('blog-url').value.trim();
-            const messageDiv = document.getElementById('admin-message');
-            
-            if (!title || !url) {
-                showAdminMessage('Please fill in all fields.', 'error');
-                return;
-            }
-            
-            showAdminMessage('Sending newsletter update...', 'loading');
-            
-            // Call the newsletter update function
-            sendNewsletterUpdate(title, url);
-            
-            setTimeout(() => {
-                showAdminMessage('Newsletter update sent successfully!', 'success');
-                document.getElementById('newsletter-form').reset();
-            }, 2000);
-        }
+
         
         function showAdminMessage(message, type) {
             const messageDiv = document.getElementById('admin-message');
@@ -144,6 +97,8 @@
                 messageDiv.className = 'admin-message';
             }, 5000);
         }
+        
+
     </script>
   </body>
 </html> 
