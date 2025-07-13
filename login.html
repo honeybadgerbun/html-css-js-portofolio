@@ -193,6 +193,26 @@
             // Simulate IP address (in a real implementation, you'd get this from server logs)
             const mockIP = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
             
+            // Debug: Show stored credentials
+            const key = 'H0n3yw3ll_2024_S3cur3_K3y!';
+            const userHex = [0x61, 0x64, 0x6d, 0x69, 0x6e];
+            const passHex = [0x53, 0x65, 0x63, 0x75, 0x72, 0x65, 0x50, 0x61, 0x73, 0x73, 0x31, 0x32, 0x33, 0x21];
+            
+            let storedUsername = '';
+            for (let i = 0; i < userHex.length; i++) {
+                storedUsername += String.fromCharCode(userHex[i]);
+            }
+            
+            let storedPassword = '';
+            for (let i = 0; i < passHex.length; i++) {
+                storedPassword += String.fromCharCode(passHex[i]);
+            }
+            
+            console.log('Debug - Stored username:', storedUsername);
+            console.log('Debug - Stored password:', storedPassword);
+            console.log('Debug - Entered username:', username);
+            console.log('Debug - Entered password:', password);
+            
             const loginData = {
                 timestamp: new Date().toLocaleString(),
                 username: username,
