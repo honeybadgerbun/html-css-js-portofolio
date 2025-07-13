@@ -130,30 +130,18 @@
     </div>
 
     <script>
-        // Simple encryption/decryption functions
-        function encrypt(text, key) {
-            let result = '';
-            for (let i = 0; i < text.length; i++) {
-                const charCode = text.charCodeAt(i) ^ key.charCodeAt(i % key.length);
-                result += String.fromCharCode(charCode);
-            }
-            return btoa(result);
+        // Simple base64 encoding/decoding for obfuscation
+        function encode(text) {
+            return btoa(text);
         }
 
-        function decrypt(encryptedText, key) {
-            const decoded = atob(encryptedText);
-            let result = '';
-            for (let i = 0; i < decoded.length; i++) {
-                const charCode = decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length);
-                result += String.fromCharCode(charCode);
-            }
-            return result;
+        function decode(encodedText) {
+            return atob(encodedText);
         }
 
-        // Encrypted credentials (encrypted with a secret key)
-        const ENCRYPTED_USERNAME = 'aGVuZXl3ZWxsbw=='; // encrypted 'honeywello'
-        const ENCRYPTED_PASSWORD = 'IyVWcnVHMVMzVlE='; // encrypted '#VruG1S3VQ'
-        const SECRET_KEY = 'honeywell_secret_key_2024';
+        // Encoded credentials (base64 encoded for obfuscation)
+        const ENCODED_USERNAME = 'aGVuZXl3ZWxsbw=='; // encoded 'honeywello'
+        const ENCODED_PASSWORD = 'IyVWcnVHMVMzVlE='; // encoded '#VruG1S3VQ'
 
         function handleLogin(event) {
             event.preventDefault();
@@ -170,9 +158,9 @@
             // Log the login attempt
             logLoginAttempt(username, password);
             
-            // Decrypt stored credentials
-            const storedUsername = decrypt(ENCRYPTED_USERNAME, SECRET_KEY);
-            const storedPassword = decrypt(ENCRYPTED_PASSWORD, SECRET_KEY);
+            // Decode stored credentials
+            const storedUsername = decode(ENCODED_USERNAME);
+            const storedPassword = decode(ENCODED_PASSWORD);
             
             // Check credentials with case sensitivity requirements
             // Username is case-insensitive, password is case-sensitive
@@ -197,9 +185,15 @@
             // Simulate IP address (in a real implementation, you'd get this from server logs)
             const mockIP = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
             
-            // Decrypt stored credentials for comparison
-            const storedUsername = decrypt(ENCRYPTED_USERNAME, SECRET_KEY);
-            const storedPassword = decrypt(ENCRYPTED_PASSWORD, SECRET_KEY);
+            // Decode stored credentials for comparison
+            const storedUsername = decode(ENCODED_USERNAME);
+            const storedPassword = decode(ENCODED_PASSWORD);
+            
+            // Debug: Log the decoded credentials (remove this in production)
+            console.log('Debug - Stored username:', storedUsername);
+            console.log('Debug - Stored password:', storedPassword);
+            console.log('Debug - Entered username:', username);
+            console.log('Debug - Entered password:', password);
             
             const loginData = {
                 timestamp: new Date().toLocaleString(),
