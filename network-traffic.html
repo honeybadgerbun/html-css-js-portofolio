@@ -122,7 +122,25 @@
             loadTrafficData();
         });
         
-        function loadTrafficData() {
+        async function loadTrafficData() {
+            try {
+                // Try to fetch data from serverless function
+                const response = await fetch('/.netlify/functions/traffic-log');
+                if (response.ok) {
+                    const data = await response.json();
+                    const trafficLog = data.visits || [];
+                    
+                    // Store in localStorage for filtering
+                    localStorage.setItem('trafficLog', JSON.stringify(trafficLog));
+                } else {
+                    // Fallback to localStorage
+                    console.log('Serverless function not available, using localStorage');
+                }
+            } catch (error) {
+                console.log('Error fetching traffic data:', error);
+                // Fallback to localStorage
+            }
+            
             const trafficLog = JSON.parse(localStorage.getItem('trafficLog') || '[]');
             const totalVisits = document.getElementById('total-visits').querySelector('.stat-number');
             const uniqueVisitors = document.getElementById('unique-visitors').querySelector('.stat-number');

@@ -1,0 +1,15 @@
+{
+  "name": "portfolio-traffic-functions",
+  "version": "1.0.0",
+  "description": "Serverless functions for portfolio traffic logging",
+  "main": "traffic-log.js",
+  "dependencies": {
+    "mongodb": "^5.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["netlify", "serverless", "traffic", "analytics"],
+  "author": "",
+  "license": "ISC"
+} 

@@ -219,7 +219,7 @@ function showAdminMessage(message, type) {
 }
 
 // Traffic monitoring function
-function logPageVisit() {
+async function logPageVisit() {
     const currentPage = window.location.pathname;
     const pageName = currentPage === '/' || currentPage === '/index.html' ? 'Portfolio' :
                     currentPage.includes('blog') ? 'Blog' :
@@ -229,21 +229,41 @@ function logPageVisit() {
                     currentPage.includes('blog') ? 'blog' :
                     currentPage.includes('article') ? 'article' : 'unknown';
     
-    // Simulate IP address (in a real implementation, you'd get this from server logs)
-    const mockIP = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
-    
     const visitData = {
-        timestamp: new Date().toLocaleString(),
         page: pageName,
-        ip: mockIP,
-        pageType: pageType
+        pageType: pageType,
+        url: window.location.href,
+        referrer: document.referrer || 'direct'
     };
     
-    // Get existing traffic log
+    try {
+        // Send visit data to serverless function
+        const response = await fetch('/.netlify/functions/traffic-log', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(visitData)
+        });
+        
+        if (!response.ok) {
+            console.error('Failed to log visit:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error logging visit:', error);
+        // Fallback to localStorage if serverless function fails
+        fallbackLogPageVisit(visitData);
+    }
+}
+
+// Fallback function using localStorage
+function fallbackLogPageVisit(visitData) {
+    visitData.timestamp = new Date().toLocaleString();
+    visitData.ip = 'unknown'; // Can't get real IP from client-side
+    
     const trafficLog = JSON.parse(localStorage.getItem('trafficLog') || '[]');
     trafficLog.push(visitData);
     
-    // Keep only last 1000 entries to prevent localStorage overflow
     if (trafficLog.length > 1000) {
         trafficLog.splice(0, trafficLog.length - 1000);
     }
