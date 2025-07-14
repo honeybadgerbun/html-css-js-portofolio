@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 
-// MongoDB connection (hardcoded for free plan)
-const MONGODB_URI = 'mongodb+srv://honeywell7890:KBNJmq39WE55VLxG@itsalwayshoney.tyv5uwg.mongodb.net/portfolio_traffic?retryWrites=true&w=majority&appName=itsalwayshoney';
+// MongoDB connection (placeholder - use environment variable in production)
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://username:password@cluster.mongodb.net/portfolio_traffic?retryWrites=true&w=majority';
 const DB_NAME = 'portfolio_traffic';
 
 exports.handler = async (event, context) => {
@@ -21,7 +21,11 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // MongoDB is now hardcoded, so we'll use it directly
+  // Check if MongoDB URI is available
+  if (!MONGODB_URI || MONGODB_URI.includes('username:password')) {
+    console.log('MongoDB URI not configured, using sample data');
+    return handleWithoutMongoDB(event, headers);
+  }
 
   try {
     const client = new MongoClient(MONGODB_URI);
