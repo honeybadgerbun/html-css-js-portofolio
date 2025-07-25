@@ -1,8 +1,5 @@
-const { MongoClient } = require('mongodb');
-
-// MongoDB connection (placeholder - use environment variable in production)
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://username:password@cluster.mongodb.net/portfolio_traffic?retryWrites=true&w=majority';
-const DB_NAME = 'portfolio_traffic';
+// Simple traffic logging without MongoDB
+// This function stores data in memory and can be extended to use file storage
 
 exports.handler = async (event, context) => {
   // Enable CORS
@@ -21,28 +18,17 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Check if MongoDB URI is available
-  if (!MONGODB_URI || MONGODB_URI.includes('username:password')) {
-    console.log('MongoDB URI not configured, using sample data');
-    return handleWithoutMongoDB(event, headers);
-  }
-
   try {
-    const client = new MongoClient(MONGODB_URI);
-    await client.connect();
-    
-    const db = client.db(DB_NAME);
-    const collection = db.collection('visits');
-
     if (event.httpMethod === 'POST') {
       // Log a new visit
       const visitData = JSON.parse(event.body);
-      visitData.timestamp = new Date();
+      visitData.timestamp = new Date().toISOString();
       visitData.ip = event.headers['client-ip'] || event.headers['x-forwarded-for'] || 'unknown';
       visitData.userAgent = event.headers['user-agent'] || 'unknown';
       
-      await collection.insertOne(visitData);
-      await client.close();
+      // In a real implementation, you could store this in a file or simple database
+      // For now, we'll just log it and return success
+      console.log('Visit logged:', visitData);
       
       return {
         statusCode: 200,
@@ -56,81 +42,83 @@ exports.handler = async (event, context) => {
     } else if (event.httpMethod === 'GET') {
       // Retrieve visit data with filtering
       const queryParams = event.queryStringParameters || {};
-      let query = {};
       
-      // Add filters if provided
-      if (queryParams.pageType) {
-        query.pageType = queryParams.pageType;
-      }
-      if (queryParams.dateFrom) {
-        query.timestamp = { $gte: new Date(queryParams.dateFrom) };
-      }
-      if (queryParams.dateTo) {
-        query.timestamp = { ...query.timestamp, $lte: new Date(queryParams.dateTo) };
-      }
-      
-      const visits = await collection.find(query)
-        .sort({ timestamp: -1 })
-        .limit(1000)
-        .toArray();
-      
-      await client.close();
+      // Generate sample data based on filters
+      const sampleVisits = generateSampleVisits(queryParams);
       
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify({ visits })
+        body: JSON.stringify({ visits: sampleVisits })
       };
     }
   } catch (error) {
-    console.error('MongoDB Error:', error);
-    // Fallback to sample data if MongoDB fails
-    return handleWithoutMongoDB(event, headers);
+    console.error('Error:', error);
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: 'Internal server error' })
+    };
   }
 };
 
-// Fallback function when MongoDB is not available
-function handleWithoutMongoDB(event, headers) {
-  if (event.httpMethod === 'POST') {
-    const visitData = JSON.parse(event.body);
-    visitData.timestamp = new Date().toISOString();
-    visitData.ip = event.headers['client-ip'] || event.headers['x-forwarded-for'] || 'unknown';
-    visitData.userAgent = event.headers['user-agent'] || 'unknown';
-    
-    console.log('Visit logged (no MongoDB):', visitData);
-    
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ 
-        success: true, 
-        message: 'Visit logged (no persistent storage)',
-        data: visitData
-      })
-    };
-  } else if (event.httpMethod === 'GET') {
-    // Return sample data
-    const sampleVisits = [
-      {
-        timestamp: new Date().toISOString(),
-        page: 'Portfolio',
-        pageType: 'portfolio',
-        ip: '192.168.1.100',
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      },
-      {
-        timestamp: new Date(Date.now() - 3600000).toISOString(),
-        page: 'Blog',
-        pageType: 'blog',
-        ip: '203.0.113.45',
-        userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X)'
-      }
-    ];
-    
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ visits: sampleVisits })
-    };
+// Generate sample visit data
+function generateSampleVisits(filters = {}) {
+  const baseVisits = [
+    {
+      timestamp: new Date().toISOString(),
+      page: 'Portfolio',
+      pageType: 'portfolio',
+      url: 'https://yourportfolio.com/',
+      referrer: 'google.com',
+      ip: '192.168.1.100',
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    },
+    {
+      timestamp: new Date(Date.now() - 3600000).toISOString(),
+      page: 'Blog',
+      pageType: 'blog',
+      url: 'https://yourportfolio.com/blog.html',
+      referrer: 'direct',
+      ip: '203.0.113.45',
+      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X)'
+    },
+    {
+      timestamp: new Date(Date.now() - 7200000).toISOString(),
+      page: 'Article',
+      pageType: 'article',
+      url: 'https://yourportfolio.com/articles/hello_world_article.html',
+      referrer: 'https://yourportfolio.com/blog.html',
+      ip: '198.51.100.23',
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+    },
+    {
+      timestamp: new Date(Date.now() - 10800000).toISOString(),
+      page: 'Portfolio',
+      pageType: 'portfolio',
+      url: 'https://yourportfolio.com/',
+      referrer: 'linkedin.com',
+      ip: '172.16.0.50',
+      userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
+    }
+  ];
+
+  // Apply filters if provided
+  let filteredVisits = baseVisits;
+  
+  if (filters.pageType) {
+    filteredVisits = filteredVisits.filter(visit => visit.pageType === filters.pageType);
   }
+  
+  if (filters.dateFrom) {
+    const dateFrom = new Date(filters.dateFrom);
+    filteredVisits = filteredVisits.filter(visit => new Date(visit.timestamp) >= dateFrom);
+  }
+  
+  if (filters.dateTo) {
+    const dateTo = new Date(filters.dateTo);
+    filteredVisits = filteredVisits.filter(visit => new Date(visit.timestamp) <= dateTo);
+  }
+
+  return filteredVisits;
 } 
