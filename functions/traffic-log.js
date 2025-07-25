@@ -1,5 +1,41 @@
-// Simple traffic logging without MongoDB
-// This function stores data in memory and can be extended to use file storage
+// Simple traffic logging with JSON file storage
+// This function stores real visitor data in a JSON file
+
+const fs = require('fs').promises;
+const path = require('path');
+
+// Path to the JSON file for storing visit data
+const DATA_FILE = path.join(__dirname, 'visits.json');
+
+// Ensure the data file exists
+async function ensureDataFile() {
+  try {
+    await fs.access(DATA_FILE);
+  } catch (error) {
+    // File doesn't exist, create it with empty array
+    await fs.writeFile(DATA_FILE, JSON.stringify([]));
+  }
+}
+
+// Read visit data from file
+async function readVisits() {
+  try {
+    const data = await fs.readFile(DATA_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading visits file:', error);
+    return [];
+  }
+}
+
+// Write visit data to file
+async function writeVisits(visits) {
+  try {
+    await fs.writeFile(DATA_FILE, JSON.stringify(visits, null, 2));
+  } catch (error) {
+    console.error('Error writing visits file:', error);
+  }
+}
 
 exports.handler = async (event, context) => {
   // Enable CORS
@@ -19,15 +55,31 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    // Ensure data file exists
+    await ensureDataFile();
+
     if (event.httpMethod === 'POST') {
       // Log a new visit
       const visitData = JSON.parse(event.body);
       visitData.timestamp = new Date().toISOString();
       visitData.ip = event.headers['client-ip'] || event.headers['x-forwarded-for'] || 'unknown';
       visitData.userAgent = event.headers['user-agent'] || 'unknown';
+      visitData.id = Date.now().toString(); // Simple unique ID
       
-      // In a real implementation, you could store this in a file or simple database
-      // For now, we'll just log it and return success
+      // Read existing visits
+      const visits = await readVisits();
+      
+      // Add new visit
+      visits.unshift(visitData); // Add to beginning of array
+      
+      // Keep only last 1000 visits to prevent file from getting too large
+      if (visits.length > 1000) {
+        visits.splice(1000);
+      }
+      
+      // Write updated visits back to file
+      await writeVisits(visits);
+      
       console.log('Visit logged:', visitData);
       
       return {
@@ -43,13 +95,33 @@ exports.handler = async (event, context) => {
       // Retrieve visit data with filtering
       const queryParams = event.queryStringParameters || {};
       
-      // Generate sample data based on filters
-      const sampleVisits = generateSampleVisits(queryParams);
+      // Read all visits
+      let visits = await readVisits();
+      
+      // Apply filters if provided
+      if (queryParams.pageType) {
+        visits = visits.filter(visit => visit.pageType === queryParams.pageType);
+      }
+      
+      if (queryParams.dateFrom) {
+        const dateFrom = new Date(queryParams.dateFrom);
+        visits = visits.filter(visit => new Date(visit.timestamp) >= dateFrom);
+      }
+      
+      if (queryParams.dateTo) {
+        const dateTo = new Date(queryParams.dateTo);
+        visits = visits.filter(visit => new Date(visit.timestamp) <= dateTo);
+      }
+      
+      // Limit results to prevent overwhelming response
+      if (visits.length > 500) {
+        visits = visits.slice(0, 500);
+      }
       
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify({ visits: sampleVisits })
+        body: JSON.stringify({ visits })
       };
     }
   } catch (error) {
@@ -60,65 +132,4 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({ error: 'Internal server error' })
     };
   }
-};
-
-// Generate sample visit data
-function generateSampleVisits(filters = {}) {
-  const baseVisits = [
-    {
-      timestamp: new Date().toISOString(),
-      page: 'Portfolio',
-      pageType: 'portfolio',
-      url: 'https://yourportfolio.com/',
-      referrer: 'google.com',
-      ip: '192.168.1.100',
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    },
-    {
-      timestamp: new Date(Date.now() - 3600000).toISOString(),
-      page: 'Blog',
-      pageType: 'blog',
-      url: 'https://yourportfolio.com/blog.html',
-      referrer: 'direct',
-      ip: '203.0.113.45',
-      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X)'
-    },
-    {
-      timestamp: new Date(Date.now() - 7200000).toISOString(),
-      page: 'Article',
-      pageType: 'article',
-      url: 'https://yourportfolio.com/articles/hello_world_article.html',
-      referrer: 'https://yourportfolio.com/blog.html',
-      ip: '198.51.100.23',
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
-    },
-    {
-      timestamp: new Date(Date.now() - 10800000).toISOString(),
-      page: 'Portfolio',
-      pageType: 'portfolio',
-      url: 'https://yourportfolio.com/',
-      referrer: 'linkedin.com',
-      ip: '172.16.0.50',
-      userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
-    }
-  ];
-
-  // Apply filters if provided
-  let filteredVisits = baseVisits;
-  
-  if (filters.pageType) {
-    filteredVisits = filteredVisits.filter(visit => visit.pageType === filters.pageType);
-  }
-  
-  if (filters.dateFrom) {
-    const dateFrom = new Date(filters.dateFrom);
-    filteredVisits = filteredVisits.filter(visit => new Date(visit.timestamp) >= dateFrom);
-  }
-  
-  if (filters.dateTo) {
-    const dateTo = new Date(filters.dateTo);
-    filteredVisits = filteredVisits.filter(visit => new Date(visit.timestamp) <= dateTo);
-  }
-
-  return filteredVisits;
-} 
+}; 
